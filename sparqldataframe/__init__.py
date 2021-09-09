@@ -5,19 +5,27 @@ from simplejson import JSONDecodeError
 import requests
 
 
-def dbpedia_query(sparql_query):
+def dbpedia_query(sparql_query, user_agent=None):
+    if user_agent is None:
+        raise ValueError("Please provide a user-agent")
     url = 'http://dbpedia.org/sparql'
-    return query(url, sparql_query)
+    return query(url, sparql_query, user_agent)
 
 
-def wikidata_query(sparql_query):
+def wikidata_query(sparql_query, user_agent=None):
+    if user_agent is None:
+        raise ValueError("Please provide a user-agent")
     url = 'https://query.wikidata.org/sparql'
-    return query(url, sparql_query)
+    return query(url, sparql_query, user_agent)
 
 
-def query(url, sparql_query):
+def query(url = None, sparql_query = None, user_agent=None):
+    if user_agent is None:
+        raise ValueError("Please provide a user-agent")
     try:
-        r = requests.get(url, params={'format': 'json', 'query': sparql_query})
+        r = requests.get(url,
+                         params={'format': 'json', 'query': sparql_query},
+                         headers={"User-Agent": user_agent})
         data = r.json()
     except JSONDecodeError as e:
         print(r.content)
